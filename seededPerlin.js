@@ -26,6 +26,17 @@ const zipWith = (f, xs, ys) => {
         .map((x, i) => f(x, ys[i]));
 }
 
+function* pseudoRandom(seed) {
+    let value = seed;
+
+    while (true) {
+        value = value * 16807 % 2147483647;
+        let length = Math.log(value) * Math.LOG10E + 1 | 0;
+        let max = 10 ** (length - 1) - 1;
+        yield parseFloat(max / value); // returns a float between 0 and 1
+    }
+};
+
 /*
 dim:Dimension number of vectors in the grid
 This object behaves like a grid consisting of dim dimensional vectors
@@ -33,8 +44,9 @@ random vectors generated when needed.
 */
 class Grid {
 
-    constructor(dim) {
+    constructor(dim, seed) {
         this.dim = dim;
+        this.seed = seed;
         this.grid = {}
     }
 
@@ -46,16 +58,16 @@ class Grid {
     get(key) {
         if (!(key in this.grid)) {
             //if gradient is not calculated for the given key before, generate it and put it to grid
-            var point = []
-            Array.from({ length: this.dim }, (x, i) => point.push(Math.random() * 2 - 1));
+            let point = []
+            Array.from({ length: this.dim }, (x, i) => point.push(pseudoRandom(this.seed) * 2 - 1));
 
-            var sum = 0
-            for (var i = 0; i < point.length; i++) {
+            let sum = 0
+            for (let i = 0; i < point.length; i++) {
                 sum += Math.pow(point[i], 2)
             }
 
-            var sqrt = Math.sqrt(sum)
-            for (var i = 0; i < point.length; i++) {
+            let sqrt = Math.sqrt(sum)
+            for (let i = 0; i < point.length; i++) {
                 point[i] /= sqrt
             }
 
@@ -73,11 +85,12 @@ dim: number of dimensions you want to sample from
 */
 
 class Perlin {
-    constructor(dim, octaves = 1) {
+    constructor(dim, octaves = 1, seed) {
         this.dim = dim;
-        this.octaves = octaves
-        this.grid = new Grid(this.dim)
-        this.scaleFactor = 2 * Math.pow(this.dim, -0.5)
+        this.octaves = octaves;
+        this.seed = seed;
+        this.grid = new Grid(this.dim, this.seed);
+        this.scaleFactor = 2 * Math.pow(this.dim, -0.5);
     }
 
     /*
@@ -88,21 +101,21 @@ class Perlin {
     sample(point) {
 
         //calculate corners of the grid cell that the point falls into
-        var gridCorners = []
+        let gridCorners = [];
         for (const dim of point) {
             const min_ = Math.floor(dim);
             const max_ = min_ + 1
             gridCorners.push([min_, max_])
         }
         //cartesian(...grid_corners) produces each point' coordinates of the grid cell
-        var dots = []
+        let dots = []
         for (const gridCoords of cartesian(...gridCorners)) {
             //get gradient vector from grid
-            var gradient = this.grid.get(gridCoords)
+            let gradient = this.grid.get(gridCoords)
 
             //calculate offset vector by subtracting grid point from the point we sample
-            var offset = []
-            for (var i = 0; i < point.length; i++) {
+            let offset = []
+            for (let i = 0; i < point.length; i++) {
                 offset.push(point[i] - gridCoords[i])
             }
             //console.log(dotProduct(gradient,offset))
@@ -112,21 +125,7 @@ class Perlin {
 
         }
 
-        /*
-        cartesian function produces results in a way that şast dimension of the lists fluctuate the most like
-        [0,0,0] first element of first four lists is same and first element of last four lists is same
-        [0,0,1]  
-        [0,1,0]
-        [0,1,1] for second element it changes once per two lists
-        [1,0,0]	
-        [1,0,1] last element changes in each list 0->1->0->1...
-        [1,1,0]
-        [1,1,1]
-        hence we can interpolate wrt to first dimension by splitting list into two and zip them 
-        and then linear interpolate each points that corresponds to each other.
-        We do this process for each dimension once.Hence we can say that this while loops for dim times.
-        */
-        var dim = -1
+        let dim = -1
         while (dots.length != 1) {
             dim += 1
             const half = (dots.length) / 2
@@ -134,35 +133,29 @@ class Perlin {
 
             let new_dots = []
             for (const x of zipWith((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
-                new_dots.push(lerp(s, x[0], x[1]))
+                new_dots.push(interp(s, x[0], x[1]))
             }
             dots = new_dots
 
         }
-        //return interpolated result
         return dots[0] * this.scaleFactor
     }
 
     call(point) {
 
-        var ret = 0
+        let ret = 0
 
-        //if there are octaves apply them
-        for (var i = 0; i < this.octaves; i++) {
+        for (let i = 0; i < this.octaves; i++) {
             const frequency = 1 << i
-            var scaledPoint = []
+            let scaledPoint = []
             for (const dim of point) {
-                scaledPoint.push(dim * frequency)
+                scaledPoint.push(dim * frequency);
             }
-            ret += this.sample(scaledPoint) / frequency
+            ret += this.sample(scaledPoint) / frequency;
         }
 
-        ret /= 2 - Math.pow(2, (1 - this.octaves))
-        return ret
+        ret /= 2 - Math.pow(2, (1 - this.octaves));
+        return ret;
     }
 }
-//module.exports = Perlin
-
-let p = new Perlin(2, 1);
-console.log(p.call([0.5,0.5]));
-console.log(p.call([0.5,0.5001]));
+module.exports = Perlin;
