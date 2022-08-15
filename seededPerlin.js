@@ -15,15 +15,12 @@ const lerp = (t, a, b) => a + (b - a) * t;
 const dotProduct = (xs, ys) => {
     const sum = xs => xs ? xs.reduce((a, b) => a + b, 0) : undefined;
 
-    return xs.length === ys.length ? (
-        sum(zipWith((a, b) => a * b, xs, ys))
-    ) : undefined;
+    return xs.length === ys.length ? (sum(zipWith((a, b) => a * b, xs, ys))) : undefined;
 }
 
 const zipWith = (f, xs, ys) => {
     const ny = ys.length;
-    return (xs.length <= ny ? xs : xs.slice(0, ny))
-        .map((x, i) => f(x, ys[i]));
+    return (xs.length <= ny ? xs : xs.slice(0, ny)).map((x, i) => f(x, ys[i]));
 }
 
 function* pseudoRandom(seed) {
@@ -47,7 +44,7 @@ class Grid {
     constructor(dim, seed) {
         this.dim = dim;
         this.seed = seed;
-        this.grid = {}
+        this.grid = {};
     }
 
     /*
@@ -58,23 +55,23 @@ class Grid {
     get(key) {
         if (!(key in this.grid)) {
             //if gradient is not calculated for the given key before, generate it and put it to grid
-            let point = []
+            let point = [];
             Array.from({ length: this.dim }, (x, i) => point.push(pseudoRandom(this.seed) * 2 - 1));
 
-            let sum = 0
+            let sum = 0;
             for (let i = 0; i < point.length; i++) {
-                sum += Math.pow(point[i], 2)
+                sum += Math.pow(point[i], 2);
             }
 
-            let sqrt = Math.sqrt(sum)
+            let sqrt = Math.sqrt(sum);
             for (let i = 0; i < point.length; i++) {
-                point[i] /= sqrt
+                point[i] /= sqrt;
             }
 
-            this.grid[key] = point
+            this.grid[key] = point;
         }
 
-        return this.grid[key]
+        return this.grid[key];
     }
 }
 
@@ -104,41 +101,41 @@ class Perlin {
         let gridCorners = [];
         for (const dim of point) {
             const min_ = Math.floor(dim);
-            const max_ = min_ + 1
-            gridCorners.push([min_, max_])
+            const max_ = min_ + 1;
+            gridCorners.push([min_, max_]);
         }
         //cartesian(...grid_corners) produces each point' coordinates of the grid cell
-        let dots = []
+        let dots = [];
         for (const gridCoords of cartesian(...gridCorners)) {
             //get gradient vector from grid
-            let gradient = this.grid.get(gridCoords)
+            let gradient = this.grid.get(gridCoords);
 
             //calculate offset vector by subtracting grid point from the point we sample
-            let offset = []
+            let offset = [];
             for (let i = 0; i < point.length; i++) {
-                offset.push(point[i] - gridCoords[i])
+                offset.push(point[i] - gridCoords[i]);
             }
             //console.log(dotProduct(gradient,offset))
 
             //save results of dot product to an array
-            dots.push(dotProduct(gradient, offset))
+            dots.push(dotProduct(gradient, offset));
 
         }
 
         let dim = -1
         while (dots.length != 1) {
-            dim += 1
-            const half = (dots.length) / 2
-            const s = smootherstep(point[dim] - Math.floor(point[dim]))
+            dim += 1;
+            const half = (dots.length) / 2;
+            const s = smootherstep(point[dim] - Math.floor(point[dim]));
 
             let new_dots = []
             for (const x of zipWith((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
-                new_dots.push(interp(s, x[0], x[1]))
+                new_dots.push(interp(s, x[0], x[1]));
             }
-            dots = new_dots
+            dots = new_dots;
 
         }
-        return dots[0] * this.scaleFactor
+        return dots[0] * this.scaleFactor;
     }
 
     call(point) {
@@ -146,8 +143,8 @@ class Perlin {
         let ret = 0
 
         for (let i = 0; i < this.octaves; i++) {
-            const frequency = 1 << i
-            let scaledPoint = []
+            const frequency = 1 << i;
+            let scaledPoint = [];
             for (const dim of point) {
                 scaledPoint.push(dim * frequency);
             }
