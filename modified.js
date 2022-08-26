@@ -26,7 +26,7 @@ const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const dotProduct = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
 
 // zip function as in python zip
-const zip = (...rows) => [...rows[0]].map((_, c) => rows.map(row => row[c]));
+const zip = (...rows) => [...rows].map((_, c) => rows.map(row => row[c]));
 
 //perlin's improved smooth step function
 const smoothStep = (x) => 6 * x ** 5 - 15 * x ** 4 + 10 * x ** 3;
@@ -144,7 +144,7 @@ class Perlin {
             const s = smoothStep(point[dimensions] - Math.floor(point[dimensions]));
 
             let new_dots = [];
-            for (const x of zipWith((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
+            for (const x of zip((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
                 new_dots.push(lerp(s, x[0], x[1]));
             }
             dots = new_dots;
@@ -174,4 +174,4 @@ class Perlin {
 }
 
 let p = new Perlin(2, 2);
-console.log();
+console.log(p.sample([1.3, 4]));

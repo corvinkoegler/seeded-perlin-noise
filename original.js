@@ -190,3 +190,6 @@ for(var i=0; i<100; i++){
 console.log(JSON.stringify(arr))
 
 */
+
+let p = new Perlin(2, 2);
+console.log(p.sample([1.3, 4]));
