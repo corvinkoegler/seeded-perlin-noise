@@ -103,7 +103,7 @@ class Perlin {
             gridCorners.push([min_, max_]);
         }
         //cartesian(...grid_corners) produces each point' coordinates of the grid cell
-        let dots = []
+        let dots = [];
         for (const gridCoords of cartesian(...gridCorners)) {
             //get gradient vector from grid
             let gradient = this.grid.get(gridCoords);
@@ -143,7 +143,7 @@ class Perlin {
             const half = (dots.length) / 2;
             const s = smoothStep(point[dimensions] - Math.floor(point[dimensions]));
 
-            let new_dots = []
+            let new_dots = [];
             for (const x of zipWith((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
                 new_dots.push(lerp(s, x[0], x[1]));
             }
@@ -174,4 +174,4 @@ class Perlin {
 }
 
 let p = new Perlin(2, 2);
-console.log(p.grid.get([1, 2]));
+console.log();
