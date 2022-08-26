@@ -109,7 +109,7 @@ class Perlin {
             let gradient = this.grid.get(gridCoords);
 
             //calculate offset vector by subtracting grid point from the point we sample
-            let offset = []
+            let offset = [];
             for (let i = 0; i < point.length; i++) {
                 offset.push(point[i] - gridCoords[i]);
             }
@@ -137,39 +137,39 @@ class Perlin {
 
         We do this process for each dimension once.Hence we can say that this while loops for dimensions times.
         */
-        let dimensions = -1
+        let dimensions = -1;
         while (dots.length != 1) {
-            dimensions += 1
-            const half = (dots.length) / 2
-            const s = smoothStep(point[dimensions] - Math.floor(point[dimensions]))
+            dimensions += 1;
+            const half = (dots.length) / 2;
+            const s = smoothStep(point[dimensions] - Math.floor(point[dimensions]));
 
             let new_dots = []
             for (const x of zipWith((x, y) => [x, y], dots.slice(0, half), dots.slice(half))) {
-                new_dots.push(lerp(s, x[0], x[1]))
+                new_dots.push(lerp(s, x[0], x[1]));
             }
-            dots = new_dots
+            dots = new_dots;
 
         }
         //return interpolated result
-        return dots[0] * this.scaleFactor
+        return dots[0] * this.scaleFactor;
     }
 
     call(point) {
 
-        let ret = 0
+        let ret = 0;
 
         //if there are octaves apply them
         for (let i = 0; i < this.octaves; i++) {
-            const frequency = 1 << i
-            let scaledPoint = []
+            const frequency = 1 << i;
+            let scaledPoint = [];
             for (const dimensions of point) {
-                scaledPoint.push(dimensions * frequency)
+                scaledPoint.push(dimensions * frequency);
             }
-            ret += this.sample(scaledPoint) / frequency
+            ret += this.sample(scaledPoint) / frequency;
         }
 
-        ret /= 2 - Math.pow(2, (1 - this.octaves))
-        return ret
+        ret /= 2 - Math.pow(2, (1 - this.octaves));
+        return ret;
     }
 }
 
