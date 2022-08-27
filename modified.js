@@ -180,6 +180,3 @@ class Perlin {
         return ret;
     }
 }
-
-let p = new Perlin(2, 2);
-console.log(p.sample([1.3, 4]));
