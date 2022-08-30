@@ -15,7 +15,7 @@ function* pseudoRandom(seed) {
     }
 };
 
-let generator = pseudoRandom(123456789);
+let generator = pseudoRandom(1);
 
 //gives cartesian product of input lists
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
