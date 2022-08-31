@@ -24,9 +24,6 @@ const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].
 const dotProduct = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
 
 // zip function as in python zip
-//const zip = (...rows) => [...rows[0]].map((_, c) => rows.map(row => row[c]));
-
-// zip function as in python zip
 const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 const zip = (f, xs, ys) => {
     const ny = ys.length;
