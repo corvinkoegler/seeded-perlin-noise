@@ -1,4 +1,4 @@
-const sr = new SeededRandom(123456);
+const sr = new SeededRandom(1234567);
 const p = new Perlin(2, sr, 1);
 const svg = document.getElementById('svg');
 const width = window.innerWidth;
