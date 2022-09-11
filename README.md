@@ -1,1 +1,1 @@
-# js-perlin-noise
+# seeded-perlin-noise
