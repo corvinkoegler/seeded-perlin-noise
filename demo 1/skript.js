@@ -1,4 +1,5 @@
-const p = new Perlin(2, 4);
+const sr = new SeededRandom(123456);
+const p = new Perlin(2, sr, 1);
 const svg = document.getElementById('svg');
 const width = window.innerWidth;
 const rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
@@ -55,9 +56,9 @@ function update(data) {
     let pointer = 0;
 
     //data[0].style.y = data[-1].style.y;
-    while (pointer <= data.length -2) {
-            data[pointer].style.y = data[pointer +1].style.y;
-            pointer ++;
+    while (pointer <= data.length - 2) {
+        data[pointer].style.y = data[pointer + 1].style.y;
+        pointer++;
     }
 
     data[pointer].style.y = peGen.next().value;
@@ -72,9 +73,9 @@ function main() {
 
     //console.log(data[data.length - 1]);
     setInterval(function () {
-    // updating
-    update(data);
-    //changing scale
+        // updating
+        update(data);
+        //changing scale
 
     }, 20);
 

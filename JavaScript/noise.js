@@ -4,19 +4,6 @@
 helper functions
 */
 
-function* pseudoRandom(seed) {
-    let value = parseInt(seed);
-
-    while (true) {
-        value = value * 16807 % 2147483647;
-        let length = Math.log(value) * Math.LOG10E + 1 | 0;
-        let max = 10 ** (length - 1) - 1;
-        yield parseFloat(max / value); // returns a float between 0 and 1
-    }
-};
-
-let generator = pseudoRandom(1);
-
 //gives cartesian product of input lists
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
 
@@ -47,9 +34,10 @@ random vectors generated when needed.
 */
 class Grid {
 
-    constructor(dimensions) {
+    constructor(dimensions, generator) {
         this.dimemensions = dimensions;
         this.grid = {};
+        this.generator = generator;
     }
 
     /*
@@ -61,7 +49,7 @@ class Grid {
 
         if (!(key in this.grid)) { // if gradient is not calculated for the given key before, generate it and put it to grid
             let point = [];
-            Array.from({ length: this.dimemensions }, (x, i) => point.push(generator.next().value * 2 - 1));
+            Array.from({ length: this.dimemensions }, (x, i) => point.push(this.generator.getIntervalValue() * 2 - 1));
 
             let sum = 0;
             for (let i = 0; i < point.length; i++) {
@@ -86,10 +74,11 @@ dimensions: number of dimensions you want to sample from
 */
 
 class Perlin {
-    constructor(dimensions, octaves = 1) {
+    constructor(dimensions, generator, octaves = 1) {
         this.dimensions = dimensions;
         this.octaves = octaves;
-        this.grid = new Grid(this.dimensions);
+        this.generator = generator;
+        this.grid = new Grid(this.dimensions, this.generator);
         this.scaleFactor = 2 * Math.pow(this.dimensions, -0.5);
     }
 
