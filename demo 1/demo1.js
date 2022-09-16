@@ -1,4 +1,4 @@
-const sr = new SeededRandom(1234567);
+const sr = new SeededRandom(1234567); // seededRandom Instance needs to exist before the Perlin one
 const p = new Perlin(2, sr, 1);
 const svg = document.getElementById('svg');
 const width = window.innerWidth;
@@ -12,7 +12,8 @@ const windowHeight = window.innerHeight ||
     document.documentElement.clientHeight ||
     document.body.clientHeight;
 
-svg.setAttribute("viewBox", `0 0 ${300} ${300}`);
+// performance reasons...
+svg.setAttribute("viewBox", `0 0 ${300} ${300}`); // svg.setAttribute("viewBox", `0 0 ${windowWidth} ${windowHeight}`);
 rect.classList.add('datapoint');
 
 let yOffset = 150;
@@ -61,7 +62,7 @@ function update(data) {
         pointer++;
     }
 
-    data[pointer].style.y = peGen.next().value;
+    data[pointer].style.y = sr.getIntervalValue();
 }
 
 function main() {
@@ -83,23 +84,3 @@ function main() {
 }
 
 main();
-
-/*for (let i = 0; i < windowWidth; i+=0.05) {
-    let point = rect.cloneNode(true);
-    point.style.x = i;
-    point.style.y = data[i];
-
-    svg.appendChild(point);
-}*/
-
-/*for (let j = 0; j < 1500; j += 500) {
-    for (let i = width; i > 0; i -= 0.1) {
-        let point = rect.cloneNode(true);
-        point.classList.add('datapoint');
-        point.style.x = i;
-        point.style.y = (p.sample([i / 10, j / 10]) + yOffset) * 10;
-        //point.style.y = (Math.random() + yOffset) * 10;
-
-        svg.appendChild(point);
-    }
-}*/
