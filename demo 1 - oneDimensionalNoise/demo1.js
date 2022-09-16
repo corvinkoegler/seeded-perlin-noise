@@ -16,9 +16,9 @@ const windowHeight = window.innerHeight ||
 svg.setAttribute("viewBox", `0 0 ${300} ${300}`); // svg.setAttribute("viewBox", `0 0 ${windowWidth} ${windowHeight}`);
 rect.classList.add('datapoint');
 
-let yOffset = 150;
-let x = 0;
-let scaleFactor = 100;
+let yOffset = 150; // offset the y-coordinate
+let x = 0; // sync output of both generators to avoid duplicates
+let scaleFactor = 100; // amplify final values
 
 function* perlinNoiseGenerator() {
     while (true) {
@@ -44,7 +44,7 @@ function* elementGenerator(template, yOffset) {
 };
 let elGen = elementGenerator(rect, yOffset);
 
-// initial fill
+// initial fill with extra values
 let generatePoints = (surplus) => {
     let result = [];
     for (let i = 0; i < windowWidth + surplus; i += 1) {
