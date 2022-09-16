@@ -4,10 +4,10 @@
 helper functions
 */
 
-//gives cartesian product of input lists
+// gives cartesian product of input lists
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
 
-//dot product of two javascript arrays
+// dot product of two javascript arrays
 const dotProduct = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
 
 // zip function as in python zip
@@ -17,10 +17,10 @@ const zip = (f, xs, ys) => {
     return (xs.length <= ny ? xs : xs.slice(0, ny)).map((x, i) => f(x, ys[i]));
 }
 
-//perlin's improved smooth step function
+// perlin's improved smooth step function
 const smoothStep = (x) => 6 * x ** 5 - 15 * x ** 4 + 10 * x ** 3;
 
-//linear interpolation
+// linear interpolation
 const lerp = (t, a, b) => a + (b - a) * t;
 
 /*
